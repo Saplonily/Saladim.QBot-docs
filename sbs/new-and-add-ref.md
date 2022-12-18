@@ -1,6 +1,6 @@
 # Saladim.QBot docs
 
-## chap1 新建工程并添加包引用
+## 新建工程并添加包引用
 
 ### .net框架选择
 
