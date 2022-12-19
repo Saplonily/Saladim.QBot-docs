@@ -14,7 +14,7 @@
 - [启动Client, 订阅消息事件](./start-client-and-sub.md)
 - [实体,更多事件及可过期类型](./entity-msg-and-expirable.md)
 - [消息构建和消息处理](./msg-action.md)
-- 消息转发
+- [消息转发](./forward-msg.md)
 - 面向纯接口使用框架
 - 拓展: SimCommand
 - 拓展: MessagePipeline
@@ -25,4 +25,4 @@
 > 在使用纯`SimCommand`环境中我们推荐重写`PreCheck`  
 > 在使用`MessagePipeline`环境中我们推荐将日志中间件后的第二项设为排除中间件
 
-最后修改: 2022-12-17 19:52:36
+最后修改: 2022-12-19 12:34:14
