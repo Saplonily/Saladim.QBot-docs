@@ -15,7 +15,7 @@
 - [实体,更多事件及可过期类型](./entity-msg-and-expirable.md)
 - [消息构建和消息处理](./msg-action.md)
 - [消息转发](./forward-msg.md)
-- 面向纯接口使用框架
+- [面向纯接口使用框架](./use-interface.md)
 - 拓展: SimCommand
 - 拓展: MessagePipeline
 - ...
