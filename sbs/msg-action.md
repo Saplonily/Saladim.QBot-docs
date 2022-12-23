@@ -70,6 +70,8 @@ client.CreateMessageBuilder(Message msgToReply);
 
 你可能了解到`image`或`record`等节点需要一个在线的url指向这个资源, 这可能意味着不能很方便的使用本地文件发送, 目前你可以使用本地开启http服务器的方式来提供, 在未来我们会以依赖注入中的服务的形式来提供这个完善的http服务器支持, 在此之前你可以参考[这个wpf管理台项目的Http服务](https://github.com/saladim-org/Saladim.QBot/blob/96ed7ead7ae75bc2c1e1ac7ee96d65fd99cc8e4b/SaladimWpf/Services/HttpServerService.cs)源码
 
+12.23 备注: 并不需要一个指向互联网的url, 你可以使用如: "file:///C:\your\files\here.png" 的格式发送本体图片
+
 ### 消息发送
 
 大部分情况下我们使用实现了消息窗口的实体就足够了, 比如我们现在拥有一个`FriendUser`类型的`friendUser`实例, 我们可以这样向其发送好友消息:
@@ -93,6 +95,6 @@ groupMsg.ReplyAsync("just replied the message with only text")
 var sender = client.GetFriendUser(groupMsg.Sender.UserId);
 sender.SendMessageAsync("qwq, 你是我的好友哎");
 ```
-目前正在计划向`User`类加入`AsFriendUser`中, 以及判别用户是否是好友
+目前正在计划向`User`类加入`AsFriendUser`方法中, 以及判别用户是否是好友
 
-最后修改: 2022-12-18 23:08:07
+最后修改: 2022-12-23 18:11:39
