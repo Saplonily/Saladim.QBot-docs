@@ -2,7 +2,7 @@
 
 ## 目录
 
-> 下述提到的'目前'时间均指最后修改时的时间
+> 下述提到的所有'目前'时间均指最后修改时的时间
 
 在开始阅读这些文档之前我们仍先推荐你阅读[快速开始](../fast-start/fast-start.md)
 
@@ -17,12 +17,14 @@
 - [消息转发](./forward-msg.md)
 - [面向纯接口使用框架](./use-interface.md)
 - 拓展: SimCommand
-- 拓展: MessagePipeline
+- 拓展: Pipeline
+- 拓展: StoreSession, MemorySession
+- 拓展: MessageCoroutine
 - ...
 
-> 注: 因为一些go-cqhttp的问题, 有关临时消息的收发(`PrivateMessage`类(不包括子类`FriendMessage`))不会被目前版本支持  
+> 注: 因为一些go-cqhttp的问题, 有关临时消息的收发(`PrivateMessage`类(不包括子类`FriendMessage`))的支持可能会相当的烂  
 > 所以请务必使用部分方式排除所有除了 `GroupMessage` *或* `FriendMessage` 的消息  
 > 在使用纯`SimCommand`环境中我们推荐重写`PreCheck`  
-> 在使用`MessagePipeline`环境中我们推荐将日志中间件后的第二项设为排除中间件
+> 在使用`MessagePipeline`环境中我们推荐将日志中间件后的第二项设为排除临时消息中间件
 
-最后修改: 2022-12-19 12:34:14
+最后修改: 2023-1-6 21:15:08

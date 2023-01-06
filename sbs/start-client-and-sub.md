@@ -53,17 +53,21 @@ cqClient.OnLog += Console.WriteLine();
 #### 订阅和打印
 ---
 一切正常后, 我们可以开始订阅收到消息时触发的事件了, 
-首先我们订阅收到消息事件, 这个事件会在收到私聊/群聊消息时触发
+首先我们订阅事件发生事件, 然后过滤出我们想要的消息收到事件.
 ```cs
-client.OnMessageReceived += Client_OnMessageReceived;
+client.OnClientEventOccurred += Client_OnClientEventOccurred;
 
 // 函数原型如下:
-void Client_OnMessageReceived(Message message)
+void Client_OnClientEventOccurred(ClientEvent clientEvent)
 ```
-然后我们在`Client_OnMessageReceived`里面做点事, 比如说直接把这个消息内容打印出来:
+然后我们在`Client_OnClientEventOccurred`里面做点事, 比如说直接把过滤出来的消息事件的消息内容打印出来:
 ```cs
-string s = $"{message.Author.Nickname.Value} 说: {message.MessageEntity.RawString}";
-Console.WriteLine(s);
+if(clientEvent is ClientMessageReceivedEvent msgEvent)
+{
+    Message message = msgEvent.Message;
+    string s = $"{message.Author.Nickname.Value} 说: {message.MessageEntity.RawString}";
+    Console.WriteLine(s);
+}
 ```
 现在先不管这段代码干了什么, 先让我们运行看看效果, 记得给bot号或者他所在的任何一个群发消息:
 ```log
@@ -97,4 +101,4 @@ Bot: repeat this message!!!
 现在我们有时间来解释一下它到底干了什么, 首先我们获取了rawString, 然后去除前后的空格, 然后我们检测是否是/echo 开头的, 是则获取对应要复读的内容. 
 接下来是这段代码的关键, 我们获取了这个消息的"消息窗口", 在代码里它是实现了`IMessageWindow`的实体, 一般地, `User`和`JoinedGroup`这两个实体实现了"消息窗口", 如果该消息是私聊消息, 那么对应的消息窗口是一个`User`实例, 向它发送消息会被转发至向这个用户发送私聊消息, 如果是群聊消息, 那么对应的是一个`JoinedGroup`实例, 同样的发消息会被转发至向群里发送群消息. 通过这个机制你可以很容易的同时兼顾私聊和群聊的指令. 
 
-最后修改: 2022-12-10 20:05:06
+最后修改: 2023-1-6 21:47:49

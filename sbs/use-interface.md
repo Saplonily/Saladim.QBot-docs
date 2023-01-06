@@ -15,11 +15,11 @@
 IClient client = new CqWebSocketClient("ws://127.0.0.1:5000", LogLevel.Trace);
 //暂时强转回来以订阅日志事件
 ((CqClient)client).OnLog += Console.WriteLine();
-//大部分事件你依然可以订阅, 但是传递来的参数是接口实例而不是准确的实现
-client.OnMessageReceived += Client_OnMessageReceive;
+//事件你依然可以订阅, 但是传递来的参数是接口类型且不知道具体实现
+client.OnClientEventOccurred += Client_OnClientEventOccurred;
 ```
 
-在`GoCqHttp`实现中我们提出了*可过期类型*, 但是在面向接口使用中我们直接废除了这个选项, 所以你可以直接获取它的值, 但是注意内部依然是使用`.Value`的方式取值.
+在`GoCqHttp`实现中我们提出了*可过期类型*, 但是在面向接口使用中我们直接废除了这个设定, 所以你可以直接获取它的值, 但是注意内部依然是使用`.Value`的方式取值, 所以**会阻塞**调用.
 
 比如我们获取一个`IUser`类型`user`实例的`Nickname`:
 ```cs
@@ -27,7 +27,9 @@ var someNickname = user.Nickname;
 //不需要再.Value
 ```
 
-因为我们不能new一个接口实例出来所以我们在使用消息构建器时只能通过client的`CreateMessageBuilder`方法来获取一个构建器, 其余方法与之前相同, 但入参均为接口类型. (怪东西: 其实接口可以通过一些黑科技new出来(((( , [参考这个](https://github.com/ilyfairy/UnsafeHelper/blob/871c2b50ebd202f8772396c1f3b6fdf5bb0adeac/UnsafeHelper/UnsafeHelper.cs#L221-L241))
+因为我们不能new一个接口实例出来所以我们在使用消息构建器时只能通过client的`CreateMessageBuilder`方法来获取一个构建器, 其余方法与之前相似, 但入参接受接口类型. 
+
+*题外话: 其实接口可以通过一些黑科技new出来(((( , [参考这个](https://github.com/ilyfairy/UnsafeHelper/blob/871c2b50ebd202f8772396c1f3b6fdf5bb0adeac/UnsafeHelper/UnsafeHelper.cs#L221-L241)*
 
 例如:
 ```cs
@@ -38,4 +40,4 @@ IMessageEntity entity = builder.Build();
 user.SendMessageAsync(entity);
 ```
 
-最后修改: 2022-12-19 14:16:43
+最后修改: 2023-1-6 21:57:09

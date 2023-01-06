@@ -2,12 +2,15 @@
 ## 实体, 更多事件及可过期类型
 
 ### 消息实体及从消息获取实体
-在前面我们订阅了消息收到事件, 然后粗略的过了一下如何获取消息的一些内容, 现在让我们深入探索一下.  
+在前面我们订阅了事件发生事件, 然后过滤出来了消息收到事件, 之后粗略的介绍了如何获取消息的一些内容, 现在让我们深入探索一下.  
 ```cs
-private static void Client_OnMessageReceived(Message message)
+void Client_OnMessageReceived(Message message)
 {
-    string s = $"{message.Author.Nickname.Value} 说: {message.MessageEntity.RawString}";
+  if (clientEvent is ClientMessageReceivedEvent msgEvent)
+  {
+    string s = $"{msgEvent.Message.Author.Nickname.Value} 说: {msgEvent.Message.MessageEntity.RawString}";
     Console.WriteLine(s);
+  }
 }
 ```
 首先我们来看`message`的`Author`属性(别名`Sender`), 顾名思义, 是这条消息的发送者, 属性的类型为`User`实体. 在这里, 我们将所有的`CqEntity`的子类叫做cq实体或简称实体, 它们都有一个公共的属性`Client`, 通过它我们可以知道哪些实体是从属于哪个client的. 回到`User`实体, 我们常用的属性大概是:
@@ -24,17 +27,17 @@ private static void Client_OnMessageReceived(Message message)
 - 文本节点, 内容为" 我@你了"
 
 因为CQ码需要"[,]"这三个字符进行转义, 所以如果文本节点中出现了这三个字符那么会被以HTML实体形式转义, 具体如下:
-|字符|对应实体转义序列|
-|:-:|:---------:|
-| & | &amp;amp; |
-| [ | &amp;#91; |
-| ] | &amp;#93; |
-| , | &amp;#44; |
+| 字符  | 对应实体转义序列 |
+| :---: | :--------------: |
+|   &   |    &amp;amp;     |
+|   [   |    &amp;#91;     |
+|   ]   |    &amp;#93;     |
+|   ,   |    &amp;#44;     |
 
 
 有时候使用`RawString`属性能满足大部分需求, 但是可能有些时候你需要知道这段消息到底@了多少个人, 你总不可能自己写正则匹配所有[]中的内容, 所以这时候我们需要获取它的`Chain`属性, `Chain`属性内包含一个`MessageChainNodes`只读集合, 你可以像这样去找到所有的at节点:
 ```cs
-var chainNodes = message.MessageEntity.Chain.MessageChainNodes;
+var chainNodes = msgEvent.Message.MessageEntity.Chain.MessageChainNodes;
 var allAtNode =
     from node in chainNodes
     where node is MessageChainAtNode
@@ -72,15 +75,15 @@ Saplonily被@了
 ```
 很符合我们的预期
 
-接下来, 你可能会觉得, 啊我获取at节点好难啊, 光是获取节点集合就要这么一长串的属性获取`message.MessageEntity.Chain.MessageChainNodes`, 之后甚至还搞了个LINQ表达式, 这多麻烦啊.  
+接下来, 你可能会觉得, 啊我获取at节点好难啊, 光是获取节点集合就要这么一长串的属性获取`msgEvent.Message.MessageEntity.Chain.MessageChainNodes`, 之后甚至还搞了个LINQ表达式, 这多麻烦啊.  
 是的, 所以我们给消息链实体提供了一系列的预制方法, 比如直接从消息链获取所有At节点:
 ```cs
-var chain = message.MessageEntity.Chain;
+var chain = msgEvent.Message.MessageEntity.Chain;
 var allAtNode = chain.AllAt();
 ```
 可能你还是觉得好麻烦啊, 一般我们只是关心消息实体内容怎么样而不是深究消息链长什么样, 所以我们同样提供了这一系列的方法直接到消息实体上:
 ```cs
-var entity = message.MessageEntity;
+var entity = msgEvent.Message.MessageEntity;
 var allAtNode = entity.AllAt();
 ```
 这样看上去就好看多了  
@@ -95,22 +98,17 @@ var allAtNode = entity.AllAt();
 
 
 ### 细分消息事件
-在前面我们订阅了`OnMessageReceived`事件, 该事件在私聊, 群聊消息收到时都会触发, ,但是由于是更广泛的事件, 所以我们不能直接从这个事件中获取更详细的信息比如到底是群消息呢还是私聊消息呢, 群号是什么又或者私聊的具体的人是谁, 一般地我们可以订阅更加详细的事件, 比如说`OnGroupMessageReceived`事件, 像这样:
-```cs
-client.OnGroupMessageReceived += Client_OnGroupMessageReceived;
+在前面我们订阅了`OnClientEventOccurred`事件, 该事件在发生了任何`go-cqhttp`支持的事件都会发生, 比如在私聊, 群聊消息收到时.
+我们之前只是过滤处理了`ClientMessageReceivedEvent`, 实际上我们有更多事件类型(可能在IDE的智能提示中你已经感受到了), 比如`ClientGroupMessageReceivedEvent`与`ClientFriendMessageReceivedEvent`, 这俩个事件都继承于`ClientMessageReceivedEvent`, 所以你可以通过过滤出`ClientMessageReceivedEvent`来处理群聊和私聊消息.
 
-//函数签名如下:
-void Client_OnGroupMessageReceived(GroupMessage message, JoinedGroup group)
-```
-当然地, `OnGroupMessageReceived`和`OnMessageReceived`会在群消息收到时同时触发, 所以你无需担心某个事件会不会被截断.
-其中顾名思义`message`是对应的群消息, `group`是收到消息的群实体, 由于`message`类型升级为了`GroupMessage`, 所以我们拥有更多属性可以使用, 常用的大概会有:
+常用的一些`ClientGroupMessageReceivedEvent`的属性大概有:
 
 - `Group`, 该消息所在群聊
 - `Author`(别名`Sender`), 该消息的发送者(细化为`GroupUser`类型)
 
 `Group`属性是个`JoinedGroup`实例, 所以我们可以显式的向群里发送消息而不是使用消息窗口:
 ```cs
-message.Group.SendMessageAsync("你好这是一条在群里的消息");
+groupMsgEvent.Group.SendMessageAsync("你好这是一条在群里的消息");
 ```
 `JoinedGroup`类型的实例`Group`有很多很实用的属性, 它们大概有:
 - `CreateTime`, 群创建的时间, 获取失败时会是`DateTime.MinValue`
@@ -123,38 +121,32 @@ message.Group.SendMessageAsync("你好这是一条在群里的消息");
 
 上述所有属性都是可过期类型, 所以你需要使用`Value`来获取它的值
 
-然后是`GroupUser`类型的`message.Author`, 它是`User`类型的子类, 它包含一系列关于这个用户在群里的信息, 常见的大概有:
+然后是`GroupUser`类型的`Author`(或者叫`Sender`), 它是`User`类型的子类, 它包含一系列关于这个用户在群里的信息, 常见的大概有:
 
-- `Card`, 群名片的值, 没设置时为`string.Empty`
+- `Card`, 群名片的值, 群成员没设置时为`string.Empty`
 - `LastMessageSentTime`, 最后一条消息的发送时间
 - `JoinTime`, 加群时间
-- `GroupRole`, 群角色, 枚举类型, 可为`Owner`,`Admin`,`Member`
+- `GroupRole`, 群角色, 枚举类型, 可为`Owner`, `Admin`, `Member`
 - `GroupTitle`, 群头衔
 - `GroupLevel`, 群等级
-- `MuteExpireTime`, 禁言到期时间, 非禁言状态时值为`1970-01-01 上午 8:00:00
-`
+- `MuteExpireTime`, 禁言到期时间, 非禁言状态时为`1970-01-01 上午 8:00:00`
 - `IsAbleToChangeCard`, 是否允许改变群名片
 - `CardOrNickname`, 群名片或者昵称, 在群名片为空时返回`Nickname`
 - `FullName`, 返回 "群名片(昵称, qq号)" 或名片为空时 "昵称(qq号)" 格式的字符串
 
 上述属性除后三个外其余都是可过期类型
 
-同样地, 你也可以订阅私聊信息:
-```cs
-void Client_OnPrivateMessageReceived(PrivateMessage message, User user)
-```
-
 此外还有更多很常见的事件, 比如:
-- `OnMessageRecalled`, 消息被撤回
-- `OnPrivateMessageRecalled`, 私聊消息被撤回
-- `OnGroupMemberBanned`, 群成员被禁言
-- `OnGroupMemberCardChanged`, 群成员名片变更
-- `OnGroupFileUploaded`, 群文件上传
-- `OnGroupMemberIncreased`, 群成员增加
-- `OnGroupMemberLiftBan`, 群成员被解禁
-- `OnGroupAdminChanged`, 群管理员变更
-- `OnGroupEssenceAdded`, 群精华消息增加
-- `OnOfflineFileReceived`, 收到私聊离线文件
+- `ClientMessageRecalledEvent`, 消息被撤回
+- `ClientPrivateMessageRecalledEvent`, 私聊消息被撤回
+- `ClientGroupMemberBannedEvent`, 群成员被禁言
+- `ClientGroupMemberCardChangedEvent`, 群成员名片变更
+- `ClientGroupFileUploadedEvent`, 群文件上传
+- `ClientGroupMemberIncreasedEvent`, 群成员增加
+- `ClientGroupMemberLiftBanEvent`, 群成员被解禁
+- `ClientGroupAdminChangedEvent`, 群管理员变更
+- `ClientGroupEssenceAddedEvent`, 群精华消息增加
+- `ClientOfflineFileReceivedEvent`, 收到私聊离线文件
 
 以及其他更多事件
 
@@ -170,11 +162,11 @@ var someGroup = client.GetGroup(1145141919);
 - `GetGroup`, 获取一个群, 允许bot不在群内
 - `GetUser`, 获取一个用户
 
-上述实体你均可以放心的储存它们, 并且随时使用`Equals`或`==`,`!=`来比较, 或使用`GetHashCode`, 它们都使用了判断是否id相等来重写它们.
+上述实体你均可以放心的储存它们, 并且随时使用`Equals`或`==`,`!=`来比较, 并且重写了`GetHashCode`, 它们都使用了判断是否id相等来重写它们.
 
 ### 可过期类型
 
 这里只是简单说一下, 在应用层你不用很关心可过期类型内部是怎么工作的  
 除了`Value`属性, 还有一个`GetValueAsync`的拓展方法(位于`SaladimQBot.Shared`命名空间), 当使用`Value`属性取值时如果值过期会阻塞调用, 同时开始调用api来获取新值, 虽然通常这不会耗费多余1s的时间, 但是有时你可能需要异步的取值操作, 所以你可以使用`GetValueAsync`来取值, 它会立即返回一个返回值为新值的`Task`, 所以你可以将方法设为异步方法并且使用`await`关键字来等待值.  
 
-最后修改: 2022-12-28 15:25:49
+最后修改: 2023-1-6 21:10:56

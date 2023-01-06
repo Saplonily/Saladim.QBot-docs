@@ -42,7 +42,7 @@ account: # 账号相关
 
 ### 引用本项目
 
-这里推荐使用nuget包的方式, 写作文档时使用的是v0.1.0-alpha版本, 你可以选择在[github release](https://github.com/saladim-org/Saladim.QBot/releases/tag/v0.1.0-alpha)上下载它(注意把所有包下载下来), 或者你可以选择手动编译项目:  
+这里推荐使用nuget包的方式, 写作文档时使用的是v0.4.1-alpha版本, 你可以选择在[github release](https://github.com/saladim-org/Saladim.QBot/releases/tag/v0.4.1-alpha)上下载它(注意把所有包下载下来), 或者你可以选择手动编译项目:  
 首先打开本项目的`Saladim.QBot.sln`解决方案, 然后选择`SaladimQBot.GoCqHttp`,`SaladimQBot.Core`,`SaladimQBot.Shared`项目进行编译打包. 获取包后安装`SaladimQBot.GoCqHttp`到实例项目, 应该会自动将其依赖安装.
 
 ## 构建Client
@@ -51,15 +51,15 @@ account: # 账号相关
 
 首先创建一个CqClient抽象类的实例。
 ```c#
-CqClient client = new CqWebSocketClient("ws://127.0.0.1:8080",LogLevel.Trace);
+CqClient client = new CqWebSocketClient("ws://127.0.0.1:8080", LogLevel.Trace);
 ```
-然后订阅OnLog事件和OnMessageReceived事件
+然后订阅OnLog事件和OnClientEventOccurred事件
 ```c#
-client.OnMessageReceived += Client_OnMessageReceived;
+client.OnClientEventOccurred += Client_OnClientEventOccurred;
 client.OnLog += Console.WriteLine;
 
 //函数签名如下:
-private static void Client_OnMessageReceived(Message message)
+void Client_OnClientEventOccurred(ClientEvent clientEvent)
 ```
 然后异步开启该客户端
 ```c#
@@ -83,12 +83,18 @@ await client.StopAsync();
 
 ## 处理Message
 
-在前面我们订阅了`OnMessageReceived`事件, 该事件会在cq服务端收到消息时发生, 现在我们来处理这个事件
-首先我们获取该消息的带cq码的消息字符串,用户名,用户ID,并输出到控制台:
+在前面我们订阅了`OnClientEventOccurred`事件, 该事件会在cq服务端发生事件后发生, 现在我们来处理这个事件
+首先我们先过滤找到其中的消息接收事件`ClientMessageReceivedEvent`
 ```c#
-string rawString = message.MessageEntity.RawString;
-long userId = message.Sender.UserId;
-string nickName = message.Sender.Nickname.Value;
+if (clientEvent is ClientMessageReceivedEvent msgEvent)
+{
+...
+```
+然后我们获取该消息的带cq码的消息字符串,用户名,用户ID,并输出到控制台:
+```c#
+string rawString = msgEvent.Message.MessageEntity.RawString;
+long userId = msgEvent.Message.Sender.UserId;
+string nickName = msgEvent.Message.Sender.Nickname.Value;
 Console.WriteLine($"{nickName}({userId})说: {rawString}");
 ```
 现在编译运行, 试试向bot所在的任何一个群里发送一条消息, 你应该会收到类似下面的输出:
@@ -128,4 +134,4 @@ Saplonily(2748166392)说: /echo 复读这条消息罢
 后续文档正在写作中, 随时欢迎帮助我们完善文档!  
 现在你可以选择继续阅读[StepByStep文档](../sbs/index.md).
 
-最后修改: 2022-12-11 12:47:21
+最后修改: 2023-1-6 19:25:53

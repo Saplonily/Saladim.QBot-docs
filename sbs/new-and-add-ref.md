@@ -29,11 +29,11 @@
 - 编译本项目
 - 在github release上下载它
 
-截止目前, 最新的版本是`v0.1.0-alpha`, 但未发布至nuget.org ,你可以到[github release](https://github.com/saladim-org/Saladim.QBot/releases/tag/v0.1.0-alpha)上下载. 注意务必包含`Core`, `Shared`, `GoCqHttp`三个包.
+截止目前, 最新的版本是`v0.4.1-alpha`, 但未发布至nuget.org ,你可以到[github release](https://github.com/saladim-org/Saladim.QBot/releases/tag/v0.4.1-alpha)上下载. 注意务必包含`Core`, `Shared`, `GoCqHttp`三个包. `Extensions`包是可选的拓展包, 是一些对这些封装的再封装, 在目录上我们可以看到在之后的章节里我们会具体介绍.
 
 在nuget包管理器上我们选择使用本地包, 并选择`SaladimQBot.GoCqHttp`包进行安装. 如果你遇到了包未找到请确保上述三个包是否位于同目录下.
 
 安装好后依赖树应该大致长这样:  
 ![package-view.png](./package-view.png)
 
-最后修改: 2022-12-10 17:08:43
+最后修改: 2023-1-6 21:58:16
