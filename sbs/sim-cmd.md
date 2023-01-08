@@ -36,7 +36,7 @@ public void Hello()
 {
     IMessageEntity entity = Content.Client.CreateMessageBuilder()
         .WithAt(Content.Executor)
-        .WithText(" 你好！)
+        .WithText(" 你好！")
         .Build();
     Content.MessageWindow.SendMessageAsync(entity);
 }
