@@ -16,7 +16,7 @@
 - [消息构建和消息处理](./msg-action.md)
 - [消息转发](./forward-msg.md)
 - [面向纯接口使用框架](./use-interface.md)
-- 拓展: SimCommand
+- [拓展: SimCommand](./sim-cmd.md)
 - 拓展: Pipeline
 - 拓展: StoreSession, MemorySession
 - 拓展: MessageCoroutine
