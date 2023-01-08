@@ -52,7 +52,9 @@ simCmd.MatchAndExecuteAll(msg);
 ```
 
 > 你可能会疑惑这里为什么叫`ExecuteAll`, 这是因为执行器会尝试匹配消息的所有文字段并**执行所有匹配的指令**  
-> 这既有好处也有坏处, 好处之一就是你可以像正常重载方法一样重载指令
+> 这既有好处也有坏处, 好处之一就是你可以像正常重载方法一样重载指令  
+> 但是坏处就是可能一条消息会触发2条即以上的指令, 这点未来可能会加入指令执行条数限制等  
+> 注意只会匹配消息的文本节点, 会忽略所有非文本节点, 即非文本节点**不会**尝试解析成参数
 
 > 默认情况下如果一个指令匹配后会进行反射调用对应模块的空构造函数得到一个新实例, 也就是每条指令执行时的`Module`实例是**不同**的, 之后我们会接受执行器的第二个重载构造器, 它允许我们指定如何获取每次的`Module`实例, 比如指定为使用`IServiceProvider`的`GetRequiredService`方法, 这样我们就可以使用构造器进行依赖注入了
 
@@ -132,6 +134,8 @@ public void Add(int a, int b)
 
 在前面我们介绍过默认的模块初始化器是每次都使用反射调用空构造函数, 为了支持一些依赖注入的需求, 你可以指定模块初始化器, 即使用`SimCommandExecuter`的构造函数的第二个重载, 第二个参数要求传入一个`Func<Type, object?>`, 其中`Type`表示执行器所需要的模块类型, `object?`为对应实例, 如果实例不为`CommandModule`类型会忽略这次指令执行的尝试
 
+> 注意: 当尝试执行的指令名字和**参数的个数**匹配时就会进行模块的实例化操作
+
 通常需要指定模块初始化器的情景是使用依赖注入, 我们在拓展包内为`IServiceCollection`拓展了一个`AddSimCommand`方法, 其原型如下:
 ```cs
 static void AddSimCommand(this IServiceCollection services, Func<IServiceProvider, SimCommandConfig> configProvider, Assembly modulesAsm)
@@ -156,5 +160,9 @@ services.AddSimCommand(s => new("/", t => (CommandModule)s.GetRequiredService(t)
 [Command("echo")] public void Echo(string s)
 ```
 这个指令遇到`/echo 114514 + 1919810`时并不会触发, 因为解析器认为用户尝试执行一个三参数的echo指令, 这里是没有的, 所以必须以双引号包围: `/echo "114514 + 1919810"`, 因为我们知道这里只会有一个参数, 所以加双引号的方式可能略显繁琐, 如果你的入参是字符串的话你可以使用如上所述的`params`指令, 然后`string.Join(' ',strs)`, 在后期可能会支持这种单参数无需引号的情况
+
+### 模块的`PreCheck`
+
+有时候一个模块你可能仅需要在某些情况下执行里面的指令, 所以你可以选择重写模块的`PreCheck`虚函数, 该虚函数会在参数匹配**但参数没解析成功**的情况下执行, 为`false`时会放弃解析跳出该指令的执行尝试
 
 最后修改: 2023-1-8 21:19:36
