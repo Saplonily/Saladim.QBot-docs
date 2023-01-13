@@ -75,6 +75,8 @@ client.CreateMessageBuilder(Message msgToReply);
 
 2022.12.23纠正上述的错误: 并不需要一个指向互联网的url, 你可以使用如: "file:///C:\your\files\here.png" 的格式发送本体图片, 这是`uri`的本地文件规则, 注意路径务必使用完整路径, 你可以使用`System.IO.Path.GetFullPath`这个方法获取完整路径, 然后在其之前拼接`"file:///"`字符串.
 
+2023-1-13: 0.4.1-alpha**之后**的版本不在要求传入`string`而是`Uri`, 创建一个指向本地文件的`Uri`可以使用`new Uri(Path.GetFullPath("相对路径here/如果是绝对路径无需/GetFullPath"))`, 或者以`http`或`https`协议指向web上的资源, 比如`new Uri("https://youdomainhere.com/yourresourcehere.png")`
+
 ### 消息发送
 
 大部分情况下我们使用实现了消息窗口的实体就足够了, 比如我们现在拥有一个`FriendUser`类型的`friendUser`实例, 我们可以这样向其发送好友消息:
@@ -84,7 +86,7 @@ await friendUser.SendMessageAsync(
     client.CreateMessageBuilder(msg)
           .WithFace(18)
           .WithTextLine("qwq")
-          .WithImage("https://somedomain.com/yourImageFilePathHere")
+          .WithImage(new Uri("https://somedomain.com/yourImageFilePathHere"))
           .Build()
     );
 ```
@@ -100,4 +102,4 @@ sender.SendMessageAsync("qwq, 你是我的好友哎");
 ```
 目前正在计划向`User`类加入`AsFriendUser`方法中, 以及判别用户是否是好友
 
-最后修改: 2023-1-6 21:33:41
+最后修改: 2023-1-13 11:57:58
