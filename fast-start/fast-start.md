@@ -42,7 +42,7 @@ account: # 账号相关
 
 ### 引用本项目
 
-这里推荐使用nuget包的方式, 写作文档时使用的是v0.4.1-alpha版本, 你可以选择在[github release](https://github.com/saladim-org/Saladim.QBot/releases/tag/v0.4.1-alpha)上下载它(注意把所有包下载下来), 或者你可以选择手动编译项目:  
+这里推荐使用nuget包的方式, 写作文档时使用的是v0.4.1-alpha版本, 你可以选择在nuget上获取它, 或者你可以选择手动编译项目:  
 首先打开本项目的`Saladim.QBot.sln`解决方案, 然后选择`SaladimQBot.GoCqHttp`,`SaladimQBot.Core`,`SaladimQBot.Shared`项目进行编译打包. 获取包后安装`SaladimQBot.GoCqHttp`到实例项目, 应该会自动将其依赖安装.
 
 ## 构建Client
