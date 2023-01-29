@@ -17,7 +17,7 @@
 - [消息转发](./forward-msg.md)
 - [面向纯接口使用框架](./use-interface.md)
 - [拓展: SimCommand](./sim-cmd.md)
-- 拓展: Pipeline
+- [拓展: Pipeline](./pipeline.md)
 - 拓展: StoreSession, MemorySession
 - 拓展: MessageCoroutine
 - ...
@@ -27,4 +27,4 @@
 > 在使用纯`SimCommand`环境中我们推荐重写`PreCheck`  
 > 在使用`MessagePipeline`环境中我们推荐将日志中间件后的第二项设为排除临时消息中间件
 
-最后修改: 2023-1-6 21:15:08
+最后修改: 2023-1-29 13:54:16
