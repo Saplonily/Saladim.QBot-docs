@@ -1,6 +1,4 @@
-# Saladim.QBot docs
-
-## SimCommand
+# SimCommand
 
 SimCommand是一个Saladim.QBot框架官方的一个拓展, 使用它你需要安装额外的包`SaladimQBot.Extensions`, 它主要拓展了对消息的以指令形式解析成对应预定义指令的功能  
 注意该包目前因为一些原因暂不支持`.net standard 2.0`, 所以还请升级你的项目至`.net 5+`
@@ -12,7 +10,7 @@ SimCommand是一个Saladim.QBot框架官方的一个拓展, 使用它你需要�
 > `/做旗子 Red Green Blue`  
 > 上述中"`/`"定义为指令根前缀, 它是所有指令执行都应该有的内容前缀, 其中`echo`,`算`,`开始五子棋`等空格前面到根前缀的部分我们称作`指令名称`, 其中部分指令还有以空格分割的参数, 我们称作`指令参数`, 如果参数中有空格我们必须使用**双引号**`"`括起来, 比如指令例子的第二项
 
-### 开始使用`SimCommandExecuter`
+## 开始使用`SimCommandExecuter`
 
 该类是解析过程的核心类, 它拥有两个构造函数, 首先是接受一个"指令根前缀"字符串这个重载
 ```cs
@@ -60,7 +58,7 @@ simCmd.MatchAndExecuteAll(msg);
 
 现在编译运行程序, 向群里发一条/hello试试, 你应该会得到`@执行者 你好!`这种格式的回复
 
-### 为指令添加参数
+## 为指令添加参数
 
 当然, 只有简简单单的无参指令并不是很有趣, 所以我们允许加入指令的参数, 比如说这样:
 ```cs
@@ -130,7 +128,7 @@ public void Add(int a, int b)
 
 如果你想加入自己自定义的解析格式的话是很容易的, 只需要操作执行器的`CommandParamParsers`这个字典, 其类型为`Dictionary<Type, Func<string, object>>`, 其中`Key`为你想解析的类型, `Value`为对应解析器, 它会传入一个分割后的`string`字符串然后要求返回一个解析后的值, 注意`Type`的类型与返回的object需一致, 否则会出现反射调用方法的错误. 在解析器内部抛出的所有异常均会被认为解析失败且忽略, 解析失败后会认为指令参数输入错误而不执行对应方法.
 
-### 指定模块初始化器
+## 指定模块初始化器
 
 在前面我们介绍过默认的模块初始化器是每次都使用反射调用空构造函数, 为了支持一些依赖注入的需求, 你可以指定模块初始化器, 即使用`SimCommandExecuter`的构造函数的第二个重载, 第二个参数要求传入一个`Func<Type, object?>`, 其中`Type`表示执行器所需要的模块类型, `object?`为对应实例, 如果实例不为`CommandModule`类型会忽略这次指令执行的尝试
 
@@ -146,7 +144,7 @@ services.AddSimCommand(s => new("/", t => (CommandModule)s.GetRequiredService(t)
 ```
 `SimCommandConfig`的构造器需要接收一个指令根前缀以及模块初始化器, 一般`(CommandModule)s.GetRequiredService(t)`足够使用, 该拓展的最后一个参数为指令模块所在的程序集, 它会反射获取程序集内所有继承于`CommandModule`的类并将其以`AddTransient`的方式加入服务集合中.
 
-### 更加复杂的参数
+## 更加复杂的参数
 
 目前只有一种支持, 即`params`指令, 要使用它我们只需要简单的在参数上加`params`, 例如:
 ```cs
@@ -163,7 +161,7 @@ services.AddSimCommand(s => new("/", t => (CommandModule)s.GetRequiredService(t)
 
 截止2023-1-26, 目前已支持名为"单参数"指令, 在`Command`特性上额外传入`isSingleParam`参数为`true`即可启用, 启用后如果尝试执行指令时参数个数过多会尝试合并多余参数到最后一个参数上, 比如这里的`/echo 114514 + 1919810`拥有三个参数, 尝试执行同名的`echo`指令时会合并`114514`, `+`, `1919810`这三个参数为一个并传入执行器, 执行器解析成功后就会传入你的方法并执行.
 
-### 模块的`PreCheck`
+## 模块的`PreCheck`
 
 有时候一个模块你可能仅需要在某些情况下执行里面的指令, 所以你可以选择重写模块的`PreCheck`虚函数, 该虚函数会在参数匹配**但参数没解析成功**的情况下执行, 为`false`时会放弃解析跳出该指令的执行尝试
 

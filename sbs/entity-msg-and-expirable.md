@@ -1,7 +1,6 @@
-# Saladim.QBot docs
-## 实体, 更多事件及可过期类型
+# 实体, 更多事件及可过期类型
 
-### 消息实体及从消息获取实体
+## 消息实体及从消息获取实体
 在前面我们订阅了事件发生事件, 然后过滤出来了消息收到事件, 之后粗略的介绍了如何获取消息的一些内容, 现在让我们深入探索一下.  
 ```cs
 void Client_OnMessageReceived(Message message)
@@ -97,7 +96,7 @@ var allAtNode = entity.AllAt();
 - `Replied(Message message)` 该消息是否回复了`message`这条消息
 
 
-### 细分消息事件
+## 细分消息事件
 在前面我们订阅了`OnClientEventOccurred`事件, 该事件在发生了任何`go-cqhttp`支持的事件都会发生, 比如在私聊, 群聊消息收到时.
 我们之前只是过滤处理了`ClientMessageReceivedEvent`, 实际上我们有更多事件类型(可能在IDE的智能提示中你已经感受到了), 比如`ClientGroupMessageReceivedEvent`与`ClientFriendMessageReceivedEvent`, 这俩个事件都继承于`ClientMessageReceivedEvent`, 所以你可以通过过滤出`ClientMessageReceivedEvent`来处理群聊和私聊消息.
 
@@ -150,7 +149,7 @@ groupMsgEvent.Group.SendMessageAsync("你好这是一条在群里的消息");
 
 以及其他更多事件
 
-### 主动从client获取实体
+## 主动从client获取实体
 大部分实体你都可以从`client`触发的事件中获取, 但有时可能你有这样的需求: 用户发送一条带qq号的消息, 然后bot发送一条带@的消息(我们还没开始了解如何构建一个复杂的消息, 你现在只需理解构建带@的消息需要一个`User`实体). 这时候我们没有从消息得来的实体, 所以我们要主动请求一个实体. 还记得之前的`CqClient`实例吗? 我们现在要再次使用它:
 ```cs
 var someGroup = client.GetGroup(1145141919);
@@ -164,7 +163,7 @@ var someGroup = client.GetGroup(1145141919);
 
 上述实体你均可以放心的储存它们, 并且随时使用`Equals`或`==`,`!=`来比较, 并且重写了`GetHashCode`, 它们都使用了判断是否id相等来重写它们.
 
-### 可过期类型
+## 可过期类型
 
 这里只是简单说一下, 在应用层你不用很关心可过期类型内部是怎么工作的  
 除了`Value`属性, 还有一个`GetValueAsync`的拓展方法(位于`SaladimQBot.Shared`命名空间), 当使用`Value`属性取值时如果值过期会阻塞调用, 同时开始调用api来获取新值, 虽然通常这不会耗费多余1s的时间, 但是有时你可能需要异步的取值操作, 所以你可以使用`GetValueAsync`来取值, 它会立即返回一个返回值为新值的`Task`, 所以你可以将方法设为异步方法并且使用`await`关键字来等待值.  

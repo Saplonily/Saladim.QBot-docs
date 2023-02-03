@@ -1,8 +1,6 @@
-# Saladim.QBot docs
+# 处理管线
 
-## 处理管线
-
-这一部分类似于asp.net core的中间件设计模式, 这里只是简单的说说:
+这一部分类似于 asp.net core 的中间件设计模式, 这里只是简单的说说:
 
 首先我们需要实例化一个泛型管道, 这里以`IClientEvent`为例:
 ```cs

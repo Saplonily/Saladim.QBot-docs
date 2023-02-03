@@ -18,13 +18,13 @@
 - [面向纯接口使用框架](./use-interface.md)
 - [拓展: SimCommand](./sim-cmd.md)
 - [拓展: Pipeline](./pipeline.md)
-- 拓展: StoreSession, MemorySession
+- [拓展: StoreSession, MemorySession]()
 - 拓展: MessageCoroutine
 - ...
 
-> 注: 因为一些go-cqhttp的问题, 有关临时消息的收发(`PrivateMessage`类(不包括子类`FriendMessage`))的支持可能会相当的烂  
+> 注: 因为一些协议实现的问题问题, 有关临时消息的收发(`PrivateMessage`类(不包括子类`FriendMessage`))的支持可能会相当的烂  
 > 所以请务必使用部分方式排除所有除了 `GroupMessage` *或* `FriendMessage` 的消息  
 > 在使用纯`SimCommand`环境中我们推荐重写`PreCheck`  
 > 在使用`MessagePipeline`环境中我们推荐将日志中间件后的第二项设为排除临时消息中间件
 
-最后修改: 2023-1-29 13:54:16
+最后修改: 2023-2-3 09:44:47

@@ -1,6 +1,4 @@
-# Saladim.QBot docs
-
-## go-cqhttp环境配置
+# go-cqhttp环境配置
 
 本框架依赖go-cqhttp(下文简称gocq)以接受和处理来自qq的消息.
 你可以到go-cqhttp的[github页面](https://github.com/Mrs4s/go-cqhttp/releases/tag/v1.0.0-rc3)上下载. 截止目前它的最新版本是v1.0.0-rc3.

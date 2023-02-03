@@ -1,12 +1,10 @@
-# SaladimQBot docs
+# 面向纯接口使用
 
-## 面向纯接口使用
-
-### 介绍
+## 介绍
 
 直接使用`SaladimQBot.GoCqHttp`的实现已满足大部分需求, 但是你可能会有再封装框架的需求, 比如再封装一个指令解析器, 但是如果使用直接的实现将不会兼容之后可能会出现的实现, 所以我们将其抽象为`SaladimQBot.Core`项目, 其中只包含拓展方法以及大量接口和抽象类. 使用接口的好处很多, 这里暂时不赘述.
 
-### 从`GoCqHttp`迁移
+## 从`GoCqHttp`迁移
 
 所有`GoCqHttp`实现中的实体基本上都实现了它们对应的接口, 比如`GroupUser`实现了`IGroupUser`, `Group`实现了`IGroup`, 所以你要做的只需要改改昵称. 特别地, `CqClient`实现的是`IClient`, 其中`IClient`的实例确保实现了大部分事件和方法, 但是不包括`GoCqHttp`的`OnLog`事件.
 

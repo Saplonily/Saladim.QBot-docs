@@ -1,8 +1,6 @@
-# Saladim.QBot docs
+# 消息构建和消息处理
 
-## 消息构建和消息处理
-
-### 消息构建
+## 消息构建
 
 一般地, 我们提供了`SendMessageAsync(string rawString)`这个函数给绝大部分的`IMessageWindow`实现类, 通过这个函数我们可以使用格式化编码后的一段字符串来发送消息实体, 在`GoCqHttp`中, 它是以CQ码进行编码的
 
@@ -24,15 +22,15 @@ var mb = client.CreateMessageBuilder();
 ```
 获取到构建器后我们就可以开始组装这个消息了, 这里我们以如下的消息为例:
 ```
-[CQ:reply,id=-858996454][CQ:at,qq=2748166392] 这是什么[CQ:face,id=32]
+[CQ:reply,id=-858996454][CQ:at,qq=2748166392] 结束啥呢[CQ:face,id=187]
 ```
 这个消息在qq中看起来是这个样子的():
 
 ![消息回复预览](2023-01-06-21-19-38.png)
 
-假设这条被回复的消息id是-858996454, 变量`msgBeReplied`储存了这条消息的引用, `2748166392`是这条消息@的人的id
+假设这条被回复的消息 id 是`-858996454`, 变量`msgBeReplied`储存了这条消息的引用, `2748166392`是这条消息@的人的 id
 
-> 其中幽灵表情的id是`187`
+> 其中幽灵表情的 id 是`187`
 
 > 在前面我们可能说了构建一个带@的消息需要一个实体, 在这里实际上这是框架早期的要求, 现在的`WithAt`拥有多个重载, 包含实体,id等作为参数.
 
@@ -69,15 +67,15 @@ client.CreateMessageBuilder(Message msgToReply);
 所有理论可支持的节点可以在[这里](https://docs.go-cqhttp.org/cqcode/#qq-%E8%A1%A8%E6%83%85)找到. 其中未在本框架中实现的节点目前暂时不可用. 
 ~~在计划中的未来我们会加入自定义节点的支持, 以使得间接支持go-cqhttp中的所有cq码.~~ 截止`v0.4.1-alpha`目前已支持`WithUnImpl`方法加入自定义节点, 其中该方法接受一个节点名称和参数字典.
 
-### 消息构建-额外
+## 消息构建-额外
 
 ~~你可能了解到`image`或`record`等节点需要一个在线的url指向这个资源, 这可能意味着不能很方便的使用本地文件发送, 目前你可以使用本地开启http服务器的方式来提供, 在未来我们会以依赖注入中的服务的形式来提供这个完善的http服务器支持, 在此之前你可以参考[这个wpf管理台项目的Http服务](https://github.com/saladim-org/Saladim.QBot/blob/96ed7ead7ae75bc2c1e1ac7ee96d65fd99cc8e4b/SaladimWpf/Services/HttpServerService.cs)源码~~
 
 2022.12.23纠正上述的错误: 并不需要一个指向互联网的url, 你可以使用如: "file:///C:\your\files\here.png" 的格式发送本体图片, 这是`uri`的本地文件规则, 注意路径务必使用完整路径, 你可以使用`System.IO.Path.GetFullPath`这个方法获取完整路径, 然后在其之前拼接`"file:///"`字符串.
 
-2023-1-13: 0.4.1-alpha**之后**的版本不在要求传入`string`而是`Uri`, 创建一个指向本地文件的`Uri`可以使用`new Uri(Path.GetFullPath("相对路径here/如果是绝对路径无需/GetFullPath"))`, 或者以`http`或`https`协议指向web上的资源, 比如`new Uri("https://youdomainhere.com/yourresourcehere.png")`
+2023-1-13: 0.4.1-alpha**之后**的版本不再要求传入`string`而是`Uri`, 创建一个指向本地文件的`Uri`可以使用`new Uri(Path.GetFullPath("相对路径here/如果是绝对路径无需/GetFullPath"))`, 或者以`http`或`https`协议指向web上的资源, 比如`new Uri("https://youdomainhere.com/yourresourcehere.png")`
 
-### 消息发送
+## 消息发送
 
 大部分情况下我们使用实现了消息窗口的实体就足够了, 比如我们现在拥有一个`FriendUser`类型的`friendUser`实例, 我们可以这样向其发送好友消息:
 ```c#
