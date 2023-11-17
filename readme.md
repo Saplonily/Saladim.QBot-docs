@@ -4,7 +4,7 @@
 
 ### 导航
 
-这是[**Saladim.QBot源仓库**](https://github.com/saladim-org/Saladim.QBot)
+这是[**Saladim.QBot源仓库**](https://github.com/Saplonily/Saladim.QBot)
 
 如果你是第一次使用那么我们建议你阅读[**快速开始**](./fast-start/fast-start.md)
 
